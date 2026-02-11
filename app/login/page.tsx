@@ -8,11 +8,11 @@ import { Button } from "@/components/ui/button"
 import { Flame, User } from "lucide-react"
 import { useActionState } from "react"
 import { authenticate, register } from "@/app/actions/auth"
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') || '/'
@@ -100,21 +100,21 @@ export default function LoginPage() {
                 </CardHeader>
                 <CardContent className="space-y-6 pt-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name" className="font-heading uppercase text-xs tracking-wider text-muted-foreground">Nome Completo</Label>
-                    <Input id="name" name="name" placeholder="Nome Cognome" className="bg-stone-900/50 border-2 border-stone-700 focus-visible:ring-primary focus-visible:border-primary rounded-lg h-12" required />
+                    <Label htmlFor="name" className="font-heading uppercase text-xs tracking-wider text-muted-foreground">Nome Cacciatore</Label>
+                    <Input id="name" name="name" type="text" placeholder="Il tuo nome" className="bg-stone-900/50 border-2 border-stone-700 focus-visible:ring-primary focus-visible:border-primary rounded-lg h-12" required />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="reg-email" className="font-heading uppercase text-xs tracking-wider text-muted-foreground">Email</Label>
-                    <Input id="reg-email" name="email" type="email" placeholder="cacciatore@esempio.com" className="bg-stone-900/50 border-2 border-stone-700 focus-visible:ring-primary focus-visible:border-primary rounded-lg h-12" required />
+                    <Label htmlFor="register-email" className="font-heading uppercase text-xs tracking-wider text-muted-foreground">Email</Label>
+                    <Input id="register-email" name="email" type="email" placeholder="cacciatore@esempio.com" className="bg-stone-900/50 border-2 border-stone-700 focus-visible:ring-primary focus-visible:border-primary rounded-lg h-12" required />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="reg-password" className="font-heading uppercase text-xs tracking-wider text-muted-foreground">Password</Label>
-                    <Input id="reg-password" name="password" type="password" className="bg-stone-900/50 border-2 border-stone-700 focus-visible:ring-primary focus-visible:border-primary rounded-lg h-12" required minLength={6} />
+                    <Label htmlFor="register-password" className="font-heading uppercase text-xs tracking-wider text-muted-foreground">Password</Label>
+                    <Input id="register-password" name="password" type="password" className="bg-stone-900/50 border-2 border-stone-700 focus-visible:ring-primary focus-visible:border-primary rounded-lg h-12" required />
                   </div>
                 </CardContent>
                 <CardFooter className="pt-2 pb-6">
                   <Button className="w-full text-xl font-heading uppercase tracking-wide py-6 shadow-sm" disabled={isRegisterPending}>
-                    {isRegisterPending ? 'Creazione profilo...' : 'Accendi il Fuoco'}
+                    {isRegisterPending ? 'Registrazione...' : 'Unisciti alla Tribù'}
                   </Button>
                 </CardFooter>
               </form>
@@ -123,5 +123,13 @@ export default function LoginPage() {
         </Tabs>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="container mx-auto px-4 py-20 flex justify-center text-xl">Caricamento...</div>}>
+      <LoginForm />
+    </Suspense>
   )
 }
