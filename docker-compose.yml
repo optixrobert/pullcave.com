@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: pullcave_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-pullcave_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pullcave_secure_password}
+      POSTGRES_DB: ${POSTGRES_DB:-pullcave_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-pullcave_user} -d ${POSTGRES_DB:-pullcave_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
