@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      String   @default("USER") // USER, ADMIN
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders    Order[]
+  cavernottiBalance Int @default(0)
+}
+
+model Product {
+  id          String      @id @default(cuid())
+  name        String
+  description String
+  price       Decimal
+  imageUrl    String?
+  category    String // Pokemon, Magic, etc.
+  set         String? // E.g., Base Set, Paldea Evolved
+  rarity      String? // Common, Rare, Holo
+  condition   String? // Mint, Near Mint, etc.
+  stock       Int         @default(0)
+  cavernottiPoints Int    @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  orderItems  OrderItem[]
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  userId        String?
+  user          User?       @relation(fields: [userId], references: [id])
+  customerName  String?
+  customerEmail String?
+  address       String?
+  city          String?
+  zipCode       String?
+  country       String?
+  total         Decimal
+  status        String      @default("PENDING") // PENDING, PAID, SHIPPED, CANCELLED
+  earnedCavernotti Int      @default(0)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  items         OrderItem[]
+  hasSpunWheel  Boolean     @default(false)
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Decimal
+}
+
+model LiveEvent {
+  id          String   @id @default(cuid())
+  title       String
+  scheduledAt DateTime
+  link        String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model BonusWheelPrize {
+  id          String   @id @default(cuid())
+  label       String
+  type        String   @default("CAVERNOTTI") // CAVERNOTTI
+  value       Int      // Amount of cavernotti
+  probability Int      // Percentage 0-100
+  color       String   @default("#fbbf24")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
