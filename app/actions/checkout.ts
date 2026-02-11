@@ -16,6 +16,8 @@ export async function placeOrder(formData: FormData, cartItems: CartItem[]) {
   if (!session?.user) {
     return { success: false, error: 'Devi effettuare il login per completare l\'ordine.' }
   }
+  
+  const userId = session.user.id!
 
   const customerName = formData.get('firstName') + ' ' + formData.get('lastName')
   const customerEmail = formData.get('email') as string
@@ -27,7 +29,7 @@ export async function placeOrder(formData: FormData, cartItems: CartItem[]) {
   // 1. Calculate total and verify stock server-side
   let total = 0
   let totalCavernotti = 0
-  const orderItemsData = []
+  const orderItemsData: any[] = []
 
   // We need to fetch products to get current price and check stock
   // Doing this in a transaction would be best to prevent race conditions
@@ -69,7 +71,7 @@ export async function placeOrder(formData: FormData, cartItems: CartItem[]) {
       // 2. Create Order
       const order = await tx.order.create({
         data: {
-          userId: session.user.id,
+          userId: userId,
           customerName,
           customerEmail,
           address,
@@ -88,7 +90,7 @@ export async function placeOrder(formData: FormData, cartItems: CartItem[]) {
       // 3. Update User Cavernotti Balance
       if (totalCavernotti > 0) {
         await tx.user.update({
-            where: { id: session.user.id },
+            where: { id: userId },
             data: {
                 cavernottiBalance: {
                     increment: totalCavernotti
