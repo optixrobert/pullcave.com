@@ -109,7 +109,7 @@ export default async function AccountPage() {
                         </p>
                     </div>
                     <div className="text-right">
-                        <p className="font-bold text-lg">{formatPrice(order.total)}</p>
+                        <p className="font-bold text-lg">{formatPrice(Number(order.total))}</p>
                         <p className="text-xs text-muted-foreground">{order.items.length} articoli</p>
                     </div>
                   </div>
@@ -118,7 +118,7 @@ export default async function AccountPage() {
                       {order.items.map((item) => (
                           <div key={item.id} className="flex justify-between text-sm">
                               <span>{item.quantity}x {item.product.name}</span>
-                              <span className="text-muted-foreground">{formatPrice(item.price)}</span>
+                              <span className="text-muted-foreground">{formatPrice(Number(item.price))}</span>
                           </div>
                       ))}
                   </div>
